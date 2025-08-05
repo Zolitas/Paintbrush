@@ -3,6 +3,7 @@ package de.tomalbrc.paintbrush.impl.gen;
 import net.minecraft.world.item.DyeColor;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,34 +11,65 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TextureGenerator {
-    public static byte[] generatePaletteColor(BufferedImage keyImg, String name) throws Exception {
-        int w = keyImg.getWidth();
-        int h = keyImg.getHeight();
+    public static byte[] generatePaletteColor(BufferedImage src, String name) throws IOException {
+        int w = src.getWidth(), h = src.getHeight();
 
-        int dye = DyeColor.byName(name, DyeColor.BLACK).getTextureDiffuseColor();
+        DyeColor d = DyeColor.byName(name, DyeColor.BLACK);
+        int dye = d.getTextureDiffuseColor();
+        int dr = (dye >> 16) & 0xFF,
+                dg = (dye >>  8) & 0xFF,
+                db =  dye        & 0xFF;
+
+        float[] hsb = Color.RGBtoHSB(dr, dg, db, null);
+        float hue = hsb[0], sat = hsb[1];
 
         BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                int argb = keyImg.getRGB(x, y);
-                int a = (argb >> 24) & 0xFF;
-                int r = (argb >> 16) & 0xFF;
-                int g = (argb >> 8) & 0xFF;
-                int b = (argb) & 0xFF;
+                int argb = src.getRGB(x, y);
+                int a  = (argb >>> 24),
+                        r  = (argb >> 16) & 0xFF,
+                        g  = (argb >>  8) & 0xFF,
+                        b  =  argb        & 0xFF;
 
-                // Multiply blend
-                int nr = r * ((dye >> 16) & 0xFF) / 255;
-                int ng = g * ((dye >> 8) & 0xFF) / 255;
-                int nb = b * (dye & 0xFF) / 255;
+                // (luma 30/59/11)
+                int gray = (r * 30 + g * 59 + b * 11) / 100;
+                float bri = gray / 255f;
 
-                int resultArgb = (a << 24) | (nr << 16) | (ng << 8) | nb;
-                out.setRGB(x, y, resultArgb);
+                float newBri;
+                int rgb;
+                switch (d) {
+                    case WHITE:
+                        // halfway toward white
+                        newBri = bri + (1f - bri) * 0.5f;
+                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        break;
+                    case LIGHT_GRAY:
+                        // 20% toward white
+                        newBri = bri + (1f - bri) * 0.2f;
+                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        break;
+                    case GRAY:
+                        // darken 60%
+                        newBri = bri * 0.6f;
+                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        break;
+                    case BLACK:
+                        // darken 75%
+                        newBri = bri * 0.25f;
+                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        break;
+                    default:
+                        // colored dyes: hue/sat from dye, brightness from gray
+                        rgb = Color.HSBtoRGB(hue, sat, (bri+hsb[2])/2f);
+                }
+
+                out.setRGB(x, y, (a << 24) | (rgb & 0x00FFFFFF));
             }
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(out, "PNG", baos);
-
         return baos.toByteArray();
     }
 

@@ -99,6 +99,10 @@ public class PaintBrush implements ModInitializer {
                 Blocks.DEEPSLATE,
                 Blocks.COBBLED_DEEPSLATE,
                 Blocks.TUFF,
+                Blocks.CHISELED_TUFF,
+                Blocks.TUFF_BRICKS,
+                Blocks.CHISELED_TUFF_BRICKS,
+                Blocks.POLISHED_TUFF,
                 Blocks.COBBLESTONE,
                 Blocks.MOSSY_COBBLESTONE,
                 Blocks.STONE,
@@ -118,6 +122,12 @@ public class PaintBrush implements ModInitializer {
                 //Blocks.BIRCH_LOG,
                 //Blocks.PALE_OAK_LOG,
                 //Blocks.OAK_LOG,
+
+                Blocks.DIORITE,
+                Blocks.POLISHED_DIORITE,
+                Blocks.ANDESITE,
+                Blocks.POLISHED_ANDESITE,
+                Blocks.DRIPSTONE_BLOCK,
 
                 Blocks.STRIPPED_OAK_LOG,
                 Blocks.PALE_OAK_PLANKS

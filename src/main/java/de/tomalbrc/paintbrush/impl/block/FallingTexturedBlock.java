@@ -1,9 +1,7 @@
 package de.tomalbrc.paintbrush.impl.block;
 
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
-import net.minecraft.core.BlockPos;
 import net.minecraft.util.ColorRGBA;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import xyz.nucleoid.packettweaker.PacketContext;
