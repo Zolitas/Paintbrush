@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "paintbrush",
+  "version": "${version}",
+  "name": "Paint Brush",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "LGPL-3.0",
+  "icon": "icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "de.tomalbrc.paintbrush.PaintBrush"
+    ]
+  },
+  "mixins": [
+    "paintbrush.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "accessWidener": "pb.accesswidener"
+}
