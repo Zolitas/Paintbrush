@@ -1,0 +1,37 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/paintgun",
+    "layer1": "item/paintgun_overlay"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [0, 90, 0],
+      "translation": [0, 3, -1],
+      "scale": [0.55, 0.55, 0.55]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [0, -90, 0],
+      "translation": [0, 3, -1],
+      "scale": [0.55, 0.55, 0.55]
+    },
+    "firstperson_righthand": {
+      "rotation": [176.67, 75.48, -159.75],
+      "translation": [2.13, 4.2, -4.12],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "firstperson_lefthand": {
+      "rotation": [-93.96, -87.09, -117.56],
+      "translation": [4.63, 4.2, -2.87],
+      "scale": [0.68, 0.68, 0.68]
+    },
+    "ground": {
+      "translation": [0, 2, 0],
+      "scale": [0.5, 0.5, 0.5]
+    },
+    "head": {
+      "rotation": [0, -180, 0],
+      "translation": [0, 13, 7]
+    }
+  }
+}

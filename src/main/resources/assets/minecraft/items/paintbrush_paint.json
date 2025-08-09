@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "model",
+    "model": "item/paintbrush_paint",
+    "tints": [
+      {
+        "type": "constant",
+        "value": 16777215
+      },
+      {
+        "type": "dye",
+        "default": 16777215
+      }
+    ]
+  }
+}

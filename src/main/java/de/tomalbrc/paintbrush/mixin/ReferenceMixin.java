@@ -1,6 +1,6 @@
 package de.tomalbrc.paintbrush.mixin;
 
-import de.tomalbrc.paintbrush.PaintBrush;
+import de.tomalbrc.paintbrush.util.Data;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
@@ -25,7 +25,7 @@ public abstract class ReferenceMixin<T> implements Holder<T> {
 
     @Inject(method = "bindTags", at = @At("HEAD"), cancellable = true)
     private void pb$bind(Collection<TagKey<T>> collection, CallbackInfo ci) {
-        Reference x = PaintBrush.TAGS.get(value);
+        Reference x = Data.TAGS.get(value);
         if (x != null) {
             MappedRegistry.TagSet<Block> set = ((MappedRegistryAccessor)(Object)BuiltInRegistries.BLOCK).getAllTags();
             var sett = new ReferenceArraySet<TagKey<T>>();

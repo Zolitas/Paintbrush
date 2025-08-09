@@ -1,39 +1,47 @@
 package de.tomalbrc.paintbrush.impl.item;
 
+import de.tomalbrc.paintbrush.impl.ModItems;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import java.util.function.Function;
 
 public class LargePaintBrushItem extends PaintBrushItem implements PolymerItem {
-    public LargePaintBrushItem(DyeColor dyeColor, Properties properties) {
-        super(dyeColor, properties.stacksTo(1).component(DataComponents.MAX_DAMAGE, 100));
+    public LargePaintBrushItem(DyeColor dyeColor, Properties properties, ResourceLocation model) {
+        super(dyeColor, properties.stacksTo(1).component(DataComponents.DAMAGE, 0), model);
     }
 
     @Override
-    public @NotNull InteractionResult useOn(UseOnContext useOnContext) {
-        Map<DyeColor, Block> map;
-        if (useOnContext.getPlayer() != null) {
-            for (BlockPos ipos : BlockPos.betweenClosed(AABB.ofSize(useOnContext.getClickedPos().getCenter(), useOnContext.getClickedFace().getAxis() == Direction.Axis.X ? 0.5 : 1.5, useOnContext.getClickedFace().getAxis() == Direction.Axis.Y ? 0.5 : 1.5, useOnContext.getClickedFace().getAxis() == Direction.Axis.Z ? 0.5 : 1.5))) {
-                if (!useOnContext.getLevel().isClientSide() && dye((ServerLevel) useOnContext.getLevel(), ipos)) {
-                    var itemStack = useOnContext.getItemInHand();
-                    itemStack.hurtAndBreak(1, useOnContext.getPlayer(), LivingEntity.getSlotForHand(useOnContext.getHand()));
-                    if (itemStack.isBroken())
-                        return InteractionResult.CONSUME;
-                }
+    public void dyeForEach(ServerLevel level, BlockPos pos, Direction face, ItemStack itemStack, Player player, Function<Boolean, Boolean> o) {
+        for (BlockPos ipos : BlockPos.betweenClosed(AABB.ofSize(pos.getCenter(), face.getAxis() == Direction.Axis.X ? 0.5 : 1.5, face.getAxis() == Direction.Axis.Y ? 0.5 : 1.5, face.getAxis() == Direction.Axis.Z ? 0.5 : 1.5))) {
+            if (level.isClientSide() || !o.apply(dye(level, ipos, dyeColor))) {
+                return;
             }
         }
+    }
 
-        return InteractionResult.CONSUME;
+    @Override
+    public int useDelay() {
+        return 15;
+    }
+
+    @Override
+    public @NotNull Component getName(ItemStack itemStack) {
+        return Component.literal("Large Paintbrush");
+    }
+
+    @Override
+    public @NotNull ItemStack asEmpty() {
+        return ModItems.LARGE_PAINTBRUSH.getDefaultInstance();
     }
 }

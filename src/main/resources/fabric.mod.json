@@ -11,7 +11,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "de.tomalbrc.paintbrush.PaintBrush"
+      "de.tomalbrc.paintbrush.PaintBrushMod"
     ]
   },
   "mixins": [

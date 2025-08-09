@@ -16,9 +16,9 @@ public class TextureGenerator {
 
         DyeColor d = DyeColor.byName(name, DyeColor.BLACK);
         int dye = d.getTextureDiffuseColor();
-        int dr = (dye >> 16) & 0xFF,
-                dg = (dye >>  8) & 0xFF,
-                db =  dye        & 0xFF;
+        int dr = (dye >> 16) & 0xFF;
+        int dg = (dye >> 8) & 0xFF;
+        int db = dye & 0xFF;
 
         float[] hsb = Color.RGBtoHSB(dr, dg, db, null);
         float hue = hsb[0], sat = hsb[1];
@@ -27,10 +27,10 @@ public class TextureGenerator {
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int argb = src.getRGB(x, y);
-                int a  = (argb >>> 24),
-                        r  = (argb >> 16) & 0xFF,
-                        g  = (argb >>  8) & 0xFF,
-                        b  =  argb        & 0xFF;
+                int a = (argb >>> 24),
+                        r = (argb >> 16) & 0xFF,
+                        g = (argb >> 8) & 0xFF,
+                        b = argb & 0xFF;
 
                 // (luma 30/59/11)
                 int gray = (r * 30 + g * 59 + b * 11) / 100;
@@ -40,28 +40,31 @@ public class TextureGenerator {
                 int rgb;
                 switch (d) {
                     case WHITE:
-                        // halfway toward white
-                        newBri = bri + (1f - bri) * 0.5f;
-                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        // 40% toward white
+                        newBri = bri;// + (1f - bri) * 0.5f;
+                        float tt = 0.75f;
+                        rgb = Color.HSBtoRGB(0f, 0f, (newBri + hsb[2]) / 2f);
                         break;
                     case LIGHT_GRAY:
                         // 20% toward white
-                        newBri = bri + (1f - bri) * 0.2f;
-                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        newBri = bri + (1f - bri) * 0.1f;
+                        rgb = Color.HSBtoRGB(0f, 0f, newBri);
                         break;
                     case GRAY:
-                        // darken 60%
-                        newBri = bri * 0.6f;
-                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        // darken 50%
+                        newBri = bri * 0.5f;
+                        rgb = Color.HSBtoRGB(0f, 0f, newBri);
                         break;
                     case BLACK:
-                        // darken 75%
-                        newBri = bri * 0.25f;
-                        rgb = Color.HSBtoRGB(0f, 0f, (newBri+hsb[2])/2f);
+                        // darken 70%
+                        newBri = bri * 0.3f;
+                        rgb = Color.HSBtoRGB(0f, 0f, newBri);
                         break;
                     default:
                         // colored dyes: hue/sat from dye, brightness from gray
-                        rgb = Color.HSBtoRGB(hue, sat, (bri+hsb[2])/2f);
+                        float t = 0.75f;                    // 75% of original brightness
+                        float bb = bri * t + hsb[2] * (1f - t);
+                        rgb = Color.HSBtoRGB(hue, sat, bb - 0.075f);
                 }
 
                 out.setRGB(x, y, (a << 24) | (rgb & 0x00FFFFFF));
