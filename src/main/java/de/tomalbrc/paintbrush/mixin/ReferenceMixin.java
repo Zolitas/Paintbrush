@@ -27,17 +27,17 @@ public abstract class ReferenceMixin<T> implements Holder<T> {
     private void pb$bind(Collection<TagKey<T>> collection, CallbackInfo ci) {
         Reference x = Data.TAGS.get(value);
         if (x != null) {
-            MappedRegistry.TagSet<Block> set = ((MappedRegistryAccessor)(Object)BuiltInRegistries.BLOCK).getAllTags();
-            var sett = new ReferenceArraySet<TagKey<T>>();
+            MappedRegistry.TagSet<Block> set = ((MappedRegistryAccessor)BuiltInRegistries.BLOCK).getAllTags();
+            var newSet = new ReferenceArraySet<TagKey<T>>();
             set.forEach((tagKey,blockNamed) -> {
                 for (Holder<Block> holder : blockNamed) {
                     if (holder == x) {
-                        sett.add((TagKey<T>) tagKey);
+                        newSet.add((TagKey<T>) tagKey);
                     }
                 }
             });
 
-            this.tags = Set.copyOf(sett);
+            this.tags = Set.copyOf(newSet);
             ci.cancel();
         }
     }
