@@ -4,6 +4,7 @@
   "package": "de.tomalbrc.paintbrush.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AxeCustomScrapingMixin"
   ],
   "client": [
   ],
