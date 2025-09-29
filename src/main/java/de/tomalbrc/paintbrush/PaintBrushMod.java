@@ -5,22 +5,15 @@ import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
 import de.tomalbrc.paintbrush.impl.ModBlocks;
 import de.tomalbrc.paintbrush.impl.ModItems;
-import de.tomalbrc.paintbrush.impl.gen.TextureGenerator;
-import de.tomalbrc.paintbrush.util.Data;
-import de.tomalbrc.paintbrush.util.ImageConverter;
+import de.tomalbrc.paintbrush.impl.PaintBlockCollection;
 import de.tomalbrc.paintbrush.util.Util;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.Block;
 import org.slf4j.Logger;
+import java.util.List;
 
-import javax.imageio.ImageIO;
-import java.io.ByteArrayInputStream;
-import java.util.Map;
 
 public class PaintBrushMod implements ModInitializer {
     public static ResourcePackBuilder VBUILDER;
@@ -33,34 +26,17 @@ public class PaintBrushMod implements ModInitializer {
         PolymerResourcePackUtils.markAsRequired();
         VBUILDER = PolymerResourcePackUtils.createBuilder(FabricLoader.getInstance().getGameDir().resolve("polymer/a"));
 
-        var list = Data.prepare();
-
-        LOGGER.info("Colored variants: {} for {} blocks", list.size() * DyeColor.values().length, list.size());
-
-        ModBlocks.registerPaintBlocks(list);
+        List<PaintBlockCollection> paintBlockCollections = ModBlocks.getPaintBlockCollections();
         ModItems.register();
-
-        var copied = new Reference2ReferenceArrayMap<>(ModBlocks.BLOCK_COLOR_MAP);
-        for (Map.Entry<Block, Map<DyeColor, Block>> entry : copied.entrySet()) {
-            for (Block value : entry.getValue().values()) {
-                ModBlocks.BLOCK_COLOR_MAP.put(value, entry.getValue());
-            }
-        }
 
         PolymerResourcePackUtils.RESOURCE_PACK_CREATION_EVENT.register(resourcePackBuilder -> {
             try {
-                var stone = "assets/minecraft/textures/block/stone.png";
-                var img = resourcePackBuilder.getDataOrSource(stone);
-                resourcePackBuilder.addData(stone, TextureGenerator.data(ImageConverter.convertGrayscaleToRGB(ImageIO.read(new ByteArrayInputStream(img)))));
-
                 JsonObject o = new JsonObject();
                 JsonArray array = new JsonArray();
 
-                for (var block : list) {
-                    var res = Util.addBlockPermutations(resourcePackBuilder, block, Util.stateSetMap(resourcePackBuilder, block));
-                    for (JsonObject ob : res) {
-                        array.add(ob);
-                    }
+                for (PaintBlockCollection collection : paintBlockCollections) {
+                    List<JsonObject> jsonObjects = Util.addBlockPermutations(resourcePackBuilder, Util.stateSetMap(resourcePackBuilder, collection.getOriginalBlock()));
+                    jsonObjects.forEach(array::add);
                 }
 
                 o.add("sources", array);

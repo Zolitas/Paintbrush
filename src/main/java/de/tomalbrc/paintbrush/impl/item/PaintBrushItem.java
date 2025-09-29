@@ -2,6 +2,7 @@ package de.tomalbrc.paintbrush.impl.item;
 
 import de.tomalbrc.paintbrush.impl.ModBlocks;
 import de.tomalbrc.paintbrush.impl.ModItems;
+import de.tomalbrc.paintbrush.impl.PaintBlockCollection;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.fabricmc.loader.impl.util.StringUtil;
 import net.minecraft.core.BlockPos;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -122,16 +124,17 @@ public class PaintBrushItem extends Item implements PolymerItem {
     }
 
     public static boolean canDye(BlockState blockState) {
-        return ModBlocks.BLOCK_COLOR_MAP.containsKey(blockState.getBlock());
+        return ModBlocks.getPaintBlockCollections().stream().anyMatch(collection -> collection.isPartOfCollection(blockState.getBlock()));
     }
 
     public static Block dyed(Block block, DyeColor dyeColor) {
-        Map<DyeColor, Block> map;
-        if ((map = ModBlocks.BLOCK_COLOR_MAP.get(block)) != null) {
-            return map.get(dyeColor);
-        }
+        Optional<PaintBlockCollection> optionalCollection = ModBlocks
+                .getPaintBlockCollections()
+                .stream()
+                .filter(collection -> collection.isPartOfCollection(block))
+                .findFirst();
 
-        return null;
+        return optionalCollection.map(paintBlockCollection -> paintBlockCollection.getPaintedBlock(dyeColor)).orElse(null);
     }
 
     public static boolean dye(ServerLevel level, BlockPos pos, DyeColor dyeColor) {

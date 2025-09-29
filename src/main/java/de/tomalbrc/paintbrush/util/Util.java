@@ -1,5 +1,6 @@
 package de.tomalbrc.paintbrush.util;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -22,12 +23,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.tomalbrc.paintbrush.util.Data.TEXTURE_REDIRECT;
 
 public class Util {
     public static ResourceLocation id(String id) {
@@ -53,7 +55,7 @@ public class Util {
                 .collect(Collectors.toList());
     }
 
-    public static List<JsonObject> addBlockPermutations(ResourcePackBuilder resourcePackBuilder, Block block, Map<BlockState, Set<StateModelVariant>> map) throws Exception {
+    public static List<JsonObject> addBlockPermutations(ResourcePackBuilder resourcePackBuilder, Map<BlockState, Set<StateModelVariant>> map) throws Exception {
         List<JsonObject> r = new ArrayList<>();
 
         for (Map.Entry<BlockState, Set<StateModelVariant>> variantEntry : map.entrySet()) {
@@ -65,7 +67,7 @@ public class Util {
 
                 var modelData = resourcePackBuilder.getStringDataOrSource(modelPath);
                 if (modelData != null) {
-                    colorModel(resourcePackBuilder, block, modelData, variant.model(), r);
+                    colorModel(resourcePackBuilder, modelData, variant.model(), r);
                 }
             }
         }
@@ -73,19 +75,20 @@ public class Util {
         return r;
     }
 
-    private static void colorModel(ResourcePackBuilder resourcePackBuilder, Block block, String modelData, ResourceLocation modelPath, List<JsonObject> r) throws Exception {
+    private static void colorModel(ResourcePackBuilder resourcePackBuilder, String modelData, ResourceLocation modelPath, List<JsonObject> r) throws Exception {
         var json = ModelAsset.fromJson(modelData);
 
         for (String value : json.textures().values()) {
             if (!value.startsWith("#")) {
-                var parsed = ResourceLocation.parse(value);
+                // we change the namespace here so it uses the copied texture and not the one in the minecraft namespace
+                var parsed = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, ResourceLocation.parse(value).getPath());
                 JsonObject source = TextureAtlasGenerator.getAtlasSourceJson(parsed);
                 r.add(source);
             }
         }
 
         for (DyeColor dye : DyeColor.values()) {
-            var path = AssetPaths.model(modelPath.withSuffix("_" + dye.getName())) + ".json";
+            var path = AssetPaths.model(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, modelPath.getPath() + "_" + dye.getName())) + ".json";
 
             var modelBuilder = ModelAsset.builder();
             if (json.parent().isPresent())
@@ -95,17 +98,21 @@ public class Util {
                 if (!entry.getValue().startsWith("#")) {
                     var valId = ResourceLocation.parse(entry.getValue());
 
-                    var id = ResourceLocation.parse(entry.getValue());
-                    var paletteIdRedirect = TEXTURE_REDIRECT.getOrDefault(id, id);
-                    var img = ImageIO.read(new ByteArrayInputStream(resourcePackBuilder.getDataOrSource(AssetPaths.texture(paletteIdRedirect) + ".png")));
+                    ResourceLocation textureLocation = ResourceLocation.parse(entry.getValue());
+
+                    byte[] textureData = resourcePackBuilder.getDataOrSource(AssetPaths.texture(textureLocation) + ".png");
+                    BufferedImage img = normalizeToARGB(ImageIO.read(new ByteArrayInputStream(textureData)));
+
+                    // copy the texture so resourcepack can override the texture without breaking stuff
+                    resourcePackBuilder.addData(AssetPaths.texture(PaintBrushMod.MODID, textureLocation.getPath()) + ".png", textureData);
+
                     var paletteKeyImage = TextureGenerator.generatePaletteKey(img);
-                    resourcePackBuilder.addData("assets/minecraft/textures/colormap/color_palettes/" + valId.getPath() + "_key" + ".png", TextureGenerator.data(paletteKeyImage));
+                    resourcePackBuilder.addData("assets/" + PaintBrushMod.MODID + "/textures/colormap/color_palettes/" + valId.getPath() + "_key" + ".png", TextureGenerator.data(paletteKeyImage));
 
                     var paletted = TextureGenerator.generatePaletteColor(paletteKeyImage, dye.getName());
-                    resourcePackBuilder.addData("assets/minecraft/textures/colormap/color_palettes/" + valId.getPath() + "_" + dye.getName() + ".png", paletted);
+                    resourcePackBuilder.addData("assets/" + PaintBrushMod.MODID + "/textures/colormap/color_palettes/" + valId.getPath() + "_" + dye.getName() + ".png", paletted);
 
-                    var suffixedId = id.withSuffix("_" + dye.getName());
-                    modelBuilder.texture(entry.getKey(), ResourceLocation.fromNamespaceAndPath("minecraft", suffixedId.getPath()).toString());
+                    modelBuilder.texture(entry.getKey(), ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, textureLocation.getPath() + "_" + dye.getName()).toString());
                 }
             }
 
@@ -142,5 +149,24 @@ public class Util {
             }
         }
         return map;
+    }
+
+    private static BufferedImage normalizeToARGB(BufferedImage sourceImage) {
+        if (sourceImage.getType() == BufferedImage.TYPE_INT_ARGB) {
+            return sourceImage;
+        }
+
+        BufferedImage normalizedImage = new BufferedImage(
+                sourceImage.getWidth(),
+                sourceImage.getHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+
+        Graphics2D g2d = normalizedImage.createGraphics();
+        g2d.setComposite(AlphaComposite.Src);
+        g2d.drawImage(sourceImage, 0, 0, null);
+        g2d.dispose();
+
+        return normalizedImage;
     }
 }

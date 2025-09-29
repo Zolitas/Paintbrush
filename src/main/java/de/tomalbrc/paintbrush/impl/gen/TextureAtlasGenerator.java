@@ -2,12 +2,13 @@ package de.tomalbrc.paintbrush.impl.gen;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import de.tomalbrc.paintbrush.PaintBrushMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 
 public class TextureAtlasGenerator {
     public static JsonObject getAtlasSourceJson(ResourceLocation blockTexture) throws Exception {
-        String namespace = "minecraft";
+        String namespace = PaintBrushMod.MODID;
         String paletteKey = namespace + ":colormap/color_palettes/" + blockTexture.getPath() + "_key";
 
         JsonObject source = new JsonObject();
