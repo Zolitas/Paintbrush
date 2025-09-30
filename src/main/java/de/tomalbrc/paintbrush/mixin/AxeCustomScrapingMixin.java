@@ -5,12 +5,10 @@ import de.tomalbrc.paintbrush.impl.PaintBlockCollection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,6 +25,7 @@ public class AxeCustomScrapingMixin {
         if (cir.getReturnValue().isEmpty()) {
             Optional<BlockState> customResult = getCustomBlockState(state);
             if (customResult.isPresent()) {
+                //todo: sound + particles dont work
                 level.playSound(player, pos, SoundEvents.AXE_SCRAPE, SoundSource.BLOCKS, 1.0f, 1.0f);
                 level.levelEvent(player, 3005, pos, Block.getId(state));
                 cir.setReturnValue(customResult);
@@ -41,7 +40,11 @@ public class AxeCustomScrapingMixin {
         Optional<PaintBlockCollection> collectionOptional = ModBlocks
                 .getPaintBlockCollections()
                 .stream()
-                .filter(collection -> collection.isPaintedBlock(block))
+                .filter(collection ->
+                        collection.isPaintedBlock(block)
+                                && collection.getOriginalBlock().defaultBlockState() != block.defaultBlockState()
+                                && !collection.isVanillaCollection()
+                )
                 .findFirst();
 
         if (collectionOptional.isPresent()) {

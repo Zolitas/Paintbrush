@@ -28,9 +28,11 @@ import java.util.*;
 public class PaintBlockCollection {
     private final Block originalBlock;
     private final Map<DyeColor, Block> paintedBlocks = new HashMap<>();
+    private final boolean isVanillaCollection;
 
-    private PaintBlockCollection(Block originalBlock) {
+    private PaintBlockCollection(Block originalBlock, boolean isVanillaCollection) {
         this.originalBlock = originalBlock;
+        this.isVanillaCollection = isVanillaCollection;
     }
 
     public Block getOriginalBlock() {
@@ -53,8 +55,20 @@ public class PaintBlockCollection {
         return paintedBlocks.containsValue(block);
     }
 
+    public boolean isVanillaCollection() {
+        return isVanillaCollection;
+    }
+
+    public static PaintBlockCollection vanilla(Block originalBlock, Map<DyeColor, Block> paintedBlocks) {
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true);
+
+        paintedBlocks.forEach(collection::setPaintedBlock);
+
+        return collection;
+    }
+
     public static PaintBlockCollection standard(Block originalBlock) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 

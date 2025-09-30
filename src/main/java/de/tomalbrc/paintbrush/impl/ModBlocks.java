@@ -1,10 +1,10 @@
 package de.tomalbrc.paintbrush.impl;
 
 
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ModBlocks {
     private static List<PaintBlockCollection> PAINT_BLOCK_COLLECTIONS = null;
@@ -18,6 +18,131 @@ public class ModBlocks {
     }
 
     private static List<PaintBlockCollection> initPaintBlockCollections() {
+        List<PaintBlockCollection> collections = new ArrayList<>();
+
+        fillWithStandardCollections(collections);
+        fillWithVanillaCollections(collections);
+
+        return collections;
+    }
+
+    private static void fillWithVanillaCollections(List<PaintBlockCollection> collections) {
+        Map<DyeColor, Block> terracottaMap = new HashMap<>();
+        terracottaMap.put(DyeColor.WHITE, Blocks.WHITE_TERRACOTTA);
+        terracottaMap.put(DyeColor.ORANGE, Blocks.ORANGE_TERRACOTTA);
+        terracottaMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_TERRACOTTA);
+        terracottaMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_TERRACOTTA);
+        terracottaMap.put(DyeColor.YELLOW, Blocks.YELLOW_TERRACOTTA);
+        terracottaMap.put(DyeColor.LIME, Blocks.LIME_TERRACOTTA);
+        terracottaMap.put(DyeColor.PINK, Blocks.PINK_TERRACOTTA);
+        terracottaMap.put(DyeColor.GRAY, Blocks.GRAY_TERRACOTTA);
+        terracottaMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_TERRACOTTA);
+        terracottaMap.put(DyeColor.CYAN, Blocks.CYAN_TERRACOTTA);
+        terracottaMap.put(DyeColor.PURPLE, Blocks.PURPLE_TERRACOTTA);
+        terracottaMap.put(DyeColor.BLUE, Blocks.BLUE_TERRACOTTA);
+        terracottaMap.put(DyeColor.BROWN, Blocks.BROWN_TERRACOTTA);
+        terracottaMap.put(DyeColor.GREEN, Blocks.GREEN_TERRACOTTA);
+        terracottaMap.put(DyeColor.RED, Blocks.RED_TERRACOTTA);
+        terracottaMap.put(DyeColor.BLACK, Blocks.BLACK_TERRACOTTA);
+        collections.add(PaintBlockCollection.vanilla(Blocks.TERRACOTTA, terracottaMap));
+
+        Map<DyeColor, Block> concreteMap = new HashMap<>();
+        concreteMap.put(DyeColor.WHITE, Blocks.WHITE_CONCRETE);
+        concreteMap.put(DyeColor.ORANGE, Blocks.ORANGE_CONCRETE);
+        concreteMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_CONCRETE);
+        concreteMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_CONCRETE);
+        concreteMap.put(DyeColor.YELLOW, Blocks.YELLOW_CONCRETE);
+        concreteMap.put(DyeColor.LIME, Blocks.LIME_CONCRETE);
+        concreteMap.put(DyeColor.PINK, Blocks.PINK_CONCRETE);
+        concreteMap.put(DyeColor.GRAY, Blocks.GRAY_CONCRETE);
+        concreteMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_CONCRETE);
+        concreteMap.put(DyeColor.CYAN, Blocks.CYAN_CONCRETE);
+        concreteMap.put(DyeColor.PURPLE, Blocks.PURPLE_CONCRETE);
+        concreteMap.put(DyeColor.BLUE, Blocks.BLUE_CONCRETE);
+        concreteMap.put(DyeColor.BROWN, Blocks.BROWN_CONCRETE);
+        concreteMap.put(DyeColor.GREEN, Blocks.GREEN_CONCRETE);
+        concreteMap.put(DyeColor.RED, Blocks.RED_CONCRETE);
+        concreteMap.put(DyeColor.BLACK, Blocks.BLACK_CONCRETE);
+        collections.add(PaintBlockCollection.vanilla(Blocks.WHITE_CONCRETE, concreteMap));
+
+        Map<DyeColor, Block> glassMap = new HashMap<>();
+        glassMap.put(DyeColor.WHITE, Blocks.WHITE_STAINED_GLASS);
+        glassMap.put(DyeColor.ORANGE, Blocks.ORANGE_STAINED_GLASS);
+        glassMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_STAINED_GLASS);
+        glassMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_STAINED_GLASS);
+        glassMap.put(DyeColor.YELLOW, Blocks.YELLOW_STAINED_GLASS);
+        glassMap.put(DyeColor.LIME, Blocks.LIME_STAINED_GLASS);
+        glassMap.put(DyeColor.PINK, Blocks.PINK_STAINED_GLASS);
+        glassMap.put(DyeColor.GRAY, Blocks.GRAY_STAINED_GLASS);
+        glassMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_STAINED_GLASS);
+        glassMap.put(DyeColor.CYAN, Blocks.CYAN_STAINED_GLASS);
+        glassMap.put(DyeColor.PURPLE, Blocks.PURPLE_STAINED_GLASS);
+        glassMap.put(DyeColor.BLUE, Blocks.BLUE_STAINED_GLASS);
+        glassMap.put(DyeColor.BROWN, Blocks.BROWN_STAINED_GLASS);
+        glassMap.put(DyeColor.GREEN, Blocks.GREEN_STAINED_GLASS);
+        glassMap.put(DyeColor.RED, Blocks.RED_STAINED_GLASS);
+        glassMap.put(DyeColor.BLACK, Blocks.BLACK_STAINED_GLASS);
+        collections.add(PaintBlockCollection.vanilla(Blocks.GLASS, glassMap));
+
+        Map<DyeColor, Block> woolMap = new HashMap<>();
+        woolMap.put(DyeColor.WHITE, Blocks.WHITE_WOOL);
+        woolMap.put(DyeColor.ORANGE, Blocks.ORANGE_WOOL);
+        woolMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_WOOL);
+        woolMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_WOOL);
+        woolMap.put(DyeColor.YELLOW, Blocks.YELLOW_WOOL);
+        woolMap.put(DyeColor.LIME, Blocks.LIME_WOOL);
+        woolMap.put(DyeColor.PINK, Blocks.PINK_WOOL);
+        woolMap.put(DyeColor.GRAY, Blocks.GRAY_WOOL);
+        woolMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_WOOL);
+        woolMap.put(DyeColor.CYAN, Blocks.CYAN_WOOL);
+        woolMap.put(DyeColor.PURPLE, Blocks.PURPLE_WOOL);
+        woolMap.put(DyeColor.BLUE, Blocks.BLUE_WOOL);
+        woolMap.put(DyeColor.BROWN, Blocks.BROWN_WOOL);
+        woolMap.put(DyeColor.GREEN, Blocks.GREEN_WOOL);
+        woolMap.put(DyeColor.RED, Blocks.RED_WOOL);
+        woolMap.put(DyeColor.BLACK, Blocks.BLACK_WOOL);
+        collections.add(PaintBlockCollection.vanilla(Blocks.WHITE_WOOL, woolMap));
+
+        Map<DyeColor, Block> carpetMap = new HashMap<>();
+        carpetMap.put(DyeColor.WHITE, Blocks.WHITE_CARPET);
+        carpetMap.put(DyeColor.ORANGE, Blocks.ORANGE_CARPET);
+        carpetMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_CARPET);
+        carpetMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_CARPET);
+        carpetMap.put(DyeColor.YELLOW, Blocks.YELLOW_CARPET);
+        carpetMap.put(DyeColor.LIME, Blocks.LIME_CARPET);
+        carpetMap.put(DyeColor.PINK, Blocks.PINK_CARPET);
+        carpetMap.put(DyeColor.GRAY, Blocks.GRAY_CARPET);
+        carpetMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_CARPET);
+        carpetMap.put(DyeColor.CYAN, Blocks.CYAN_CARPET);
+        carpetMap.put(DyeColor.PURPLE, Blocks.PURPLE_CARPET);
+        carpetMap.put(DyeColor.BLUE, Blocks.BLUE_CARPET);
+        carpetMap.put(DyeColor.BROWN, Blocks.BROWN_CARPET);
+        carpetMap.put(DyeColor.GREEN, Blocks.GREEN_CARPET);
+        carpetMap.put(DyeColor.RED, Blocks.RED_CARPET);
+        carpetMap.put(DyeColor.BLACK, Blocks.BLACK_CARPET);
+        collections.add(PaintBlockCollection.vanilla(Blocks.WHITE_CARPET, carpetMap));
+
+        Map<DyeColor, Block> concretePowderMap = new HashMap<>();
+        concretePowderMap.put(DyeColor.WHITE, Blocks.WHITE_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.ORANGE, Blocks.ORANGE_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.MAGENTA, Blocks.MAGENTA_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.LIGHT_BLUE, Blocks.LIGHT_BLUE_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.YELLOW, Blocks.YELLOW_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.LIME, Blocks.LIME_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.PINK, Blocks.PINK_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.GRAY, Blocks.GRAY_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.LIGHT_GRAY, Blocks.LIGHT_GRAY_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.CYAN, Blocks.CYAN_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.PURPLE, Blocks.PURPLE_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.BLUE, Blocks.BLUE_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.BROWN, Blocks.BROWN_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.GREEN, Blocks.GREEN_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.RED, Blocks.RED_CONCRETE_POWDER);
+        concretePowderMap.put(DyeColor.BLACK, Blocks.BLACK_CONCRETE_POWDER);
+        collections.add(PaintBlockCollection.vanilla(Blocks.WHITE_CONCRETE_POWDER, concretePowderMap));
+    }
+
+    private static void fillWithStandardCollections(List<PaintBlockCollection> collections) {
         Block[] standardBlocks = {
                 Blocks.GLOWSTONE,
                 Blocks.SANDSTONE,
@@ -53,8 +178,6 @@ public class ModBlocks {
                 Blocks.OAK_PLANKS
         };
 
-        return Arrays.stream(standardBlocks)
-                .map(PaintBlockCollection::standard)
-                .collect(Collectors.toList());
+        Arrays.stream(standardBlocks).map(PaintBlockCollection::standard).forEach(collections::add);
     }
 }
