@@ -143,7 +143,11 @@ public class PaintBlockCollection {
                 Map<BlockState, BlockState> sourceStateMap = statefulBlock.getStateMap();
 
                 originalBlock.getStateDefinition().getPossibleStates().forEach(originalState -> {
-                    BlockState textureState = sourceStateMap.values().iterator().next();
+                    BlockState textureState = sourceStateMap.entrySet().stream()
+                            .filter(entry -> hasSameProperties(originalState, entry.getKey()))
+                            .map(Map.Entry::getValue)
+                            .findFirst()
+                            .orElse(sourceStateMap.values().iterator().next());
                     stateMap.put(originalState, textureState);
                 });
             }
@@ -170,5 +174,19 @@ public class PaintBlockCollection {
         Registry.register(BuiltInRegistries.BLOCK, paintedBlockLocation, paintedBlock);
 
         return paintedBlock;
+    }
+
+    private static boolean hasSameProperties(BlockState state1, BlockState state2) {
+        return state1.getProperties().stream().allMatch(property -> {
+            if (state2.hasProperty(property)) {
+                return state1.getValue(property).equals(state2.getValue(property));
+            }
+            return false;
+        }) && state2.getProperties().stream().allMatch( property -> {
+            if (state1.hasProperty(property)) {
+                return state2.getValue(property).equals(state1.getValue(property));
+            }
+            return false;
+        });
     }
 }
