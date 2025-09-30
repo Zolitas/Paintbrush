@@ -1,7 +1,7 @@
 {
 	"parent": "item/generated",
 	"textures": {
-		"layer0": "item/paintgun"
+		"layer0": "paintbrush:item/paintgun"
 	},
 	"display": {
 		"thirdperson_righthand": {

@@ -1,7 +1,7 @@
 {
   "model": {
     "type": "model",
-    "model": "item/large_paintbrush_paint",
+    "model": "paintbrush:item/large_paintbrush_paint",
     "tints": [
       {
         "type": "constant",

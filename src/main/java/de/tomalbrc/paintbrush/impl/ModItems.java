@@ -1,5 +1,6 @@
 package de.tomalbrc.paintbrush.impl;
 
+import de.tomalbrc.paintbrush.PaintBrushMod;
 import de.tomalbrc.paintbrush.impl.item.*;
 import de.tomalbrc.paintbrush.util.Util;
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
@@ -23,7 +24,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ModItems {
-    public static Map<Block, Map<DyeColor, Block>> BLOCK_COLOR_MAP = new IdentityHashMap<>();
     public static final Object2ObjectOpenHashMap<ResourceLocation, Item> ENTRIES = new Object2ObjectOpenHashMap<>();
     public static final CreativeModeTab ITEM_GROUP = new CreativeModeTab.Builder(null, -1)
             .title(Component.literal("Paintbrush Items").withStyle(ChatFormatting.DARK_GRAY))
@@ -37,24 +37,24 @@ public class ModItems {
 
     public static void register() {
         for (DyeColor dyeColor : DyeColor.values()) {
-            ModItems.registerItem("paintbrush_" + dyeColor.getName(), properties -> new PaintBrushItem(dyeColor, properties, ResourceLocation.withDefaultNamespace("paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 64));
-            ModItems.registerItem("large_paintbrush_" + dyeColor.getName(), properties -> new LargePaintBrushItem(dyeColor, properties, ResourceLocation.withDefaultNamespace("large_paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 128));
-            ModItems.registerItem("paintgun_" + dyeColor.getName(), properties -> new PaintGun(dyeColor, properties, ResourceLocation.withDefaultNamespace("paintgun")), new Item.Properties().stacksTo(1));
+            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_" + dyeColor.getName()), properties -> new PaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 64));
+            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_" + dyeColor.getName()), properties -> new LargePaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 128));
+            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_" + dyeColor.getName()), properties -> new PaintGun(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun")), new Item.Properties().stacksTo(1));
         }
-        PAINTBRUSH = ModItems.registerItem("paintbrush", properties -> new EmptyBrush(properties, "Paintbrush"), new Item.Properties().stacksTo(1));
-        LARGE_PAINTBRUSH = ModItems.registerItem("large_paintbrush", properties -> new EmptyBrush(properties, "Large Paintbrush"), new Item.Properties().stacksTo(1));
-        EMPTY_PAINT_GUN = ModItems.registerItem("paintgun_empty", EmptyPaintGun::new, new Item.Properties().stacksTo(1));
+        PAINTBRUSH = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush"), properties -> new EmptyBrush(properties, "Paintbrush"), new Item.Properties().stacksTo(1));
+        LARGE_PAINTBRUSH = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush"), properties -> new EmptyBrush(properties, "Large Paintbrush"), new Item.Properties().stacksTo(1));
+        EMPTY_PAINT_GUN = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_empty"), EmptyPaintGun::new, new Item.Properties().stacksTo(1));
 
-        PolymerItemGroupUtils.registerPolymerItemGroup(ResourceLocation.fromNamespaceAndPath("paintbrush", "items"), ITEM_GROUP);
+        PolymerItemGroupUtils.registerPolymerItemGroup(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "items"), ITEM_GROUP);
     }
 
-    public static <T extends Item> T registerItem(String resourceKey, Function<Item.Properties, T> function, Item.Properties properties) {
-        T item = function.apply(properties.setId(key(resourceKey)));
-        ENTRIES.put(Util.id(resourceKey), item);
-        return Registry.register(BuiltInRegistries.ITEM, resourceKey, item);
+    public static <T extends Item> T registerItem(ResourceLocation resourceLocation, Function<Item.Properties, T> function, Item.Properties properties) {
+        T item = function.apply(properties.setId(key(resourceLocation)));
+        ENTRIES.put(resourceLocation, item);
+        return Registry.register(BuiltInRegistries.ITEM, resourceLocation, item);
     }
 
-    public static ResourceKey<Item> key(String id) {
-        return ResourceKey.create(Registries.ITEM, ResourceLocation.withDefaultNamespace(id));
+    public static ResourceKey<Item> key(ResourceLocation resourceLocation) {
+        return ResourceKey.create(Registries.ITEM, resourceLocation);
     }
 }

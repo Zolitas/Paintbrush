@@ -1,8 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "item/large_paintbrush",
-    "layer1": "item/large_color"
+    "layer0": "paintbrush:item/large_paintbrush"
   },
   "display": {
     "firstperson_lefthand": {

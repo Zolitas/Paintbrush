@@ -1,14 +1,14 @@
 {
   "model": {
     "type": "model",
-    "model": "item/paintgun",
+    "model": "paintbrush:item/paintbrush_paint",
     "tints": [
       {
         "type": "constant",
         "value": 16777215
       },
       {
-        "type": "minecraft:dye",
+        "type": "dye",
         "default": 16777215
       }
     ]

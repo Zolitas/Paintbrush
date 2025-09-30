@@ -32,10 +32,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Util {
-    public static ResourceLocation id(String id) {
-        return ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, id);
-    }
-
     public static Map<BlockState, Set<StateModelVariant>> stateSetMap(ResourcePackBuilder resourcePackBuilder, Block block) {
         var blockId = BuiltInRegistries.BLOCK.getKey(block);
         var stateDefString = resourcePackBuilder.getStringDataOrSource("assets/" + blockId.getNamespace() + "/blockstates/" + blockId.getPath() + ".json");
