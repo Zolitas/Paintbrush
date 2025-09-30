@@ -20,4 +20,8 @@ public class TexturedBlock extends Block implements PolymerTexturedBlock {
     public BlockState getPolymerBlockState(BlockState blockState, PacketContext packetContext) {
         return this.state.values().iterator().next();
     }
+
+    public Map<BlockState, BlockState> getStateMap() {
+        return state;
+    }
 }

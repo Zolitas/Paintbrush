@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -80,7 +81,6 @@ public class PaintBlockCollection {
                     originalBlockLocation.getPath() + "_" + dye.getName()
             );
 
-            Block paintedBlock;
             BlockBehaviour.Properties paintedBlockProperties = BlockBehaviour.Properties
                     .ofFullCopy(originalBlock)
                     .overrideLootTable(originalBlock.getLootTable())
@@ -105,20 +105,62 @@ public class PaintBlockCollection {
                     }
             );
 
-            if (originalBlock instanceof SandBlock originalSandBlock) {
-                paintedBlock = new FallingTexturedBlock(new ColorRGBA(originalSandBlock.getDustColor(null, null, null)), paintedBlockProperties, stateMap);
-            }
-            else if (originalBlock instanceof RotatedPillarBlock) {
-                paintedBlock = new TexturedPillarBlock(paintedBlockProperties, stateMap);
-            }
-            else {
-                paintedBlock = new TexturedBlock(paintedBlockProperties, stateMap);
-            }
-            Item.BY_BLOCK.put(paintedBlock, originalBlock.asItem());
-            Registry.register(BuiltInRegistries.BLOCK, paintedBlockLocation, paintedBlock);
-
-            collection.setPaintedBlock(dye, paintedBlock);
+            collection.setPaintedBlock(dye, createPaintedBlock(originalBlock, paintedBlockProperties, stateMap, paintedBlockLocation));
         }
         return collection;
+    }
+
+    public static PaintBlockCollection shared(Block originalBlock, PaintBlockCollection textureSource) {
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false);
+
+        ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
+
+        SoundPatcher.convertIntoServerSound(originalBlock.defaultBlockState().getSoundType());
+
+        for (DyeColor dye : DyeColor.values()) {
+            ResourceLocation paintedBlockLocation = ResourceLocation.fromNamespaceAndPath(
+                    PaintBrushMod.MODID,
+                    originalBlockLocation.getPath() + "_" + dye.getName()
+            );
+
+            BlockBehaviour.Properties paintedBlockProperties = BlockBehaviour.Properties
+                    .ofFullCopy(originalBlock)
+                    .overrideLootTable(originalBlock.getLootTable())
+                    .setId(ResourceKey.create(Registries.BLOCK, paintedBlockLocation));
+
+            Map<BlockState, BlockState> stateMap = new HashMap<>();
+            Block sourceBlock = textureSource.getPaintedBlock(dye);
+            
+            if (sourceBlock instanceof TexturedBlock texturedSourceBlock) {
+                Map<BlockState, BlockState> sourceStateMap = texturedSourceBlock.getStateMap();
+
+                originalBlock.getStateDefinition().getPossibleStates().forEach(originalState -> {
+                    BlockState textureState = sourceStateMap.values().iterator().next();
+                    stateMap.put(originalState, textureState);
+                });
+            }
+
+            collection.setPaintedBlock(dye, createPaintedBlock(originalBlock, paintedBlockProperties, stateMap, paintedBlockLocation));
+        }
+        return collection;
+    }
+
+    private static @NotNull Block createPaintedBlock(Block originalBlock, BlockBehaviour.Properties paintedBlockProperties, Map<BlockState, BlockState> stateMap, ResourceLocation paintedBlockLocation) {
+        Block paintedBlock;
+
+        if (originalBlock instanceof SandBlock originalSandBlock) {
+            paintedBlock = new FallingTexturedBlock(new ColorRGBA(originalSandBlock.getDustColor(null, null, null)), paintedBlockProperties, stateMap);
+        }
+        else if (originalBlock instanceof RotatedPillarBlock) {
+            paintedBlock = new TexturedPillarBlock(paintedBlockProperties, stateMap);
+        }
+        else {
+            paintedBlock = new TexturedBlock(paintedBlockProperties, stateMap);
+        }
+
+        Item.BY_BLOCK.put(paintedBlock, originalBlock.asItem());
+        Registry.register(BuiltInRegistries.BLOCK, paintedBlockLocation, paintedBlock);
+
+        return paintedBlock;
     }
 }
