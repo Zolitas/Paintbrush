@@ -7,7 +7,7 @@ import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.Map;
 
-public class TexturedPillarBlock extends RotatedPillarBlock implements PolymerTexturedBlock {
+public class TexturedPillarBlock extends RotatedPillarBlock implements PolymerTexturedBlock, StatefulBlock {
     final Map<BlockState, BlockState> state;
 
     public TexturedPillarBlock(Properties properties, Map<BlockState, BlockState> map) {
@@ -19,5 +19,10 @@ public class TexturedPillarBlock extends RotatedPillarBlock implements PolymerTe
     public BlockState getPolymerBlockState(BlockState blockState, PacketContext packetContext) {
         var key = this.state.keySet().iterator().next().getBlock().withPropertiesOf(blockState);
         return this.state.get(key);
+    }
+
+    @Override
+    public Map<BlockState, BlockState> getStateMap() {
+        return state;
     }
 }

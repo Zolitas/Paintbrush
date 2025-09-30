@@ -41,9 +41,9 @@ public class AxeCustomScrapingMixin {
                 .getPaintBlockCollections()
                 .stream()
                 .filter(collection ->
-                        collection.isPaintedBlock(block)
+                        collection.canBeScraped()
+                                && collection.isPaintedBlock(block)
                                 && collection.getOriginalBlock().defaultBlockState() != block.defaultBlockState()
-                                && !collection.isVanillaCollection()
                 )
                 .findFirst();
 

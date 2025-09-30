@@ -35,7 +35,7 @@ public class PaintBrushMod implements ModInitializer {
                 JsonArray array = new JsonArray();
 
                 for (PaintBlockCollection collection : paintBlockCollections) {
-                    if (collection.isVanillaCollection()) continue;
+                    if (!collection.shouldGenerateModels()) continue;
 
                     List<JsonObject> jsonObjects = Util.addBlockPermutations(resourcePackBuilder, Util.stateSetMap(resourcePackBuilder, collection.getOriginalBlock()));
                     jsonObjects.forEach(array::add);

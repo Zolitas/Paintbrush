@@ -2,6 +2,7 @@ package de.tomalbrc.paintbrush.impl;
 
 import de.tomalbrc.paintbrush.PaintBrushMod;
 import de.tomalbrc.paintbrush.impl.block.FallingTexturedBlock;
+import de.tomalbrc.paintbrush.impl.block.StatefulBlock;
 import de.tomalbrc.paintbrush.impl.block.TexturedBlock;
 import de.tomalbrc.paintbrush.impl.block.TexturedPillarBlock;
 import de.tomalbrc.paintbrush.util.Util;
@@ -23,17 +24,20 @@ import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.system.linux.Stat;
 
 import java.util.*;
 
 public class PaintBlockCollection {
     private final Block originalBlock;
     private final Map<DyeColor, Block> paintedBlocks = new HashMap<>();
-    private final boolean isVanillaCollection;
+    private final boolean canBeScraped;
+    private final boolean shouldGenerateModels;
 
-    private PaintBlockCollection(Block originalBlock, boolean isVanillaCollection) {
+    private PaintBlockCollection(Block originalBlock, boolean canBeScraped, boolean shouldGenerateModels) {
         this.originalBlock = originalBlock;
-        this.isVanillaCollection = isVanillaCollection;
+        this.canBeScraped = canBeScraped;
+        this.shouldGenerateModels = shouldGenerateModels;
     }
 
     public Block getOriginalBlock() {
@@ -56,12 +60,16 @@ public class PaintBlockCollection {
         return paintedBlocks.containsValue(block);
     }
 
-    public boolean isVanillaCollection() {
-        return isVanillaCollection;
+    public boolean canBeScraped() {
+        return canBeScraped;
+    }
+
+    public boolean shouldGenerateModels() {
+        return shouldGenerateModels;
     }
 
     public static PaintBlockCollection vanilla(Block originalBlock, Map<DyeColor, Block> paintedBlocks) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false, false);
 
         paintedBlocks.forEach(collection::setPaintedBlock);
 
@@ -69,7 +77,7 @@ public class PaintBlockCollection {
     }
 
     public static PaintBlockCollection standard(Block originalBlock) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, true);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 
@@ -111,7 +119,7 @@ public class PaintBlockCollection {
     }
 
     public static PaintBlockCollection shared(Block originalBlock, PaintBlockCollection textureSource) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, false);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 
@@ -131,8 +139,8 @@ public class PaintBlockCollection {
             Map<BlockState, BlockState> stateMap = new HashMap<>();
             Block sourceBlock = textureSource.getPaintedBlock(dye);
             
-            if (sourceBlock instanceof TexturedBlock texturedSourceBlock) {
-                Map<BlockState, BlockState> sourceStateMap = texturedSourceBlock.getStateMap();
+            if (sourceBlock instanceof StatefulBlock statefulBlock) {
+                Map<BlockState, BlockState> sourceStateMap = statefulBlock.getStateMap();
 
                 originalBlock.getStateDefinition().getPossibleStates().forEach(originalState -> {
                     BlockState textureState = sourceStateMap.values().iterator().next();

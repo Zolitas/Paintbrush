@@ -8,7 +8,7 @@ import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.Map;
 
-public class FallingTexturedBlock extends SandBlock implements PolymerTexturedBlock {
+public class FallingTexturedBlock extends SandBlock implements PolymerTexturedBlock, StatefulBlock {
     final Map<BlockState, BlockState> state;
 
     public FallingTexturedBlock(ColorRGBA colorRGBA, Properties properties, Map<BlockState, BlockState> state) {
@@ -20,5 +20,10 @@ public class FallingTexturedBlock extends SandBlock implements PolymerTexturedBl
     @Override
     public BlockState getPolymerBlockState(BlockState blockState, PacketContext packetContext) {
         return this.state.values().iterator().next();
+    }
+
+    @Override
+    public Map<BlockState, BlockState> getStateMap() {
+        return state;
     }
 }
