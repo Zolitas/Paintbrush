@@ -38,7 +38,7 @@ public class PaintBlockTagDataGenerator implements DataGeneratorEntrypoint {
             for (MineableTool tool : MineableTool.values()) {
                 List<PaintBlockCollection> collectionsWithCorrectTool = paintBlockCollections
                         .stream()
-                        .filter(paintBlockCollection -> paintBlockCollection.shouldGenerateModels() && paintBlockCollection.getTool() == tool)
+                        .filter(paintBlockCollection -> paintBlockCollection.shouldGenerateBlockStates() && paintBlockCollection.getTool() == tool)
                         .toList();
 
                 if (collectionsWithCorrectTool.isEmpty()) continue;

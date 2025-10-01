@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -37,12 +38,15 @@ public class PaintBlockCollection {
     private final Map<DyeColor, Block> paintedBlocks = new HashMap<>();
     private final boolean canBeScraped;
     private final boolean shouldGenerateModels;
+    private final boolean shouldGenerateBlockStates;
     private final MineableTool tool;
 
-    private PaintBlockCollection(Block originalBlock, boolean canBeScraped, boolean shouldGenerateModels, MineableTool tool) {
+    private PaintBlockCollection(Block originalBlock, boolean canBeScraped, boolean shouldGenerateModels,
+                                 boolean shouldGenerateBlockStates, @Nullable MineableTool tool) {
         this.originalBlock = originalBlock;
         this.canBeScraped = canBeScraped;
         this.shouldGenerateModels = shouldGenerateModels;
+        this.shouldGenerateBlockStates = shouldGenerateBlockStates;
         this.tool = tool;
     }
 
@@ -82,6 +86,10 @@ public class PaintBlockCollection {
         return shouldGenerateModels;
     }
 
+    public boolean shouldGenerateBlockStates() {
+        return shouldGenerateBlockStates;
+    }
+
     /**
      * This collection does not generate new blocks or models but replaces blocks with the given ones when a paintbrush is used.
      * @param originalBlock The original block, needs to be part of the built-in block registry.
@@ -89,7 +97,7 @@ public class PaintBlockCollection {
      * @return The painted block collection.
      */
     public static PaintBlockCollection vanilla(Block originalBlock, Map<DyeColor, Block> paintedBlocks) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false, false, null);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false, false, false, null);
 
         paintedBlocks.forEach(collection::setPaintedBlock);
 
@@ -102,8 +110,8 @@ public class PaintBlockCollection {
      * @param tool The tool that should speed up mining of the painted blocks. Can be null.
      * @return The painted block collection.
      */
-    public static PaintBlockCollection standard(Block originalBlock, MineableTool tool) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, true, tool);
+    public static PaintBlockCollection standard(Block originalBlock, @Nullable MineableTool tool) {
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, true, true, tool);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 
@@ -148,11 +156,11 @@ public class PaintBlockCollection {
      * This collection does not generate new models but uses the models of the given source collection.
      * Note: Using this collection does not use a new noteblock-blockstate and so doesn't fill up the limit
      * @param originalBlock The original block, needs to be part of the built-in block registry.
-     * @param textureSource The source collection where it takes the models from.
+     * @param sourceCollection The source collection where it takes the models from.
      * @return The painted block collection.
      */
-    public static PaintBlockCollection shared(Block originalBlock, PaintBlockCollection textureSource) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, false, null);
+    public static PaintBlockCollection shared(Block originalBlock, PaintBlockCollection sourceCollection) {
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, false, true, sourceCollection.getTool());
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 
@@ -170,7 +178,7 @@ public class PaintBlockCollection {
                     .setId(ResourceKey.create(Registries.BLOCK, paintedBlockLocation));
 
             Map<BlockState, BlockState> stateMap = new HashMap<>();
-            Block sourceBlock = textureSource.getPaintedBlock(dye);
+            Block sourceBlock = sourceCollection.getPaintedBlock(dye);
             
             if (sourceBlock instanceof StatefulBlock statefulBlock) {
                 Map<BlockState, BlockState> sourceStateMap = statefulBlock.getStateMap();
