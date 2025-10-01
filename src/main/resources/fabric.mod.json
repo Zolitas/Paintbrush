@@ -14,7 +14,8 @@
       "de.tomalbrc.paintbrush.PaintBrushMod"
     ],
     "fabric-datagen": [
-      "de.tomalbrc.paintbrush.datagen.PaintBlockTagDataGenerator"
+      "de.tomalbrc.paintbrush.datagen.PaintBlockTagDataGenerator",
+      "de.tomalbrc.paintbrush.datagen.PaintBrushRecipeDataGenerator"
     ]
   },
   "mixins": [

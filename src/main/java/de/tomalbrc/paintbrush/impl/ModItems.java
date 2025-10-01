@@ -2,7 +2,6 @@ package de.tomalbrc.paintbrush.impl;
 
 import de.tomalbrc.paintbrush.PaintBrushMod;
 import de.tomalbrc.paintbrush.impl.item.*;
-import de.tomalbrc.paintbrush.util.Util;
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
@@ -17,10 +16,8 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 
-import java.util.IdentityHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class ModItems {
@@ -35,15 +32,32 @@ public class ModItems {
     public static Item LARGE_PAINTBRUSH;
     public static Item EMPTY_PAINT_GUN;
 
+    public static Map<ResourceLocation, Item> PAINTBRUSH_ITEMS = new HashMap<>();
+    public static Map<ResourceLocation, Item> LARGE_PAINTBRUSH_ITEMS = new HashMap<>();
+    public static Map<ResourceLocation, Item> PAINTGUN_ITEMS = new HashMap<>();
+
     public static void register() {
         for (DyeColor dyeColor : DyeColor.values()) {
-            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_" + dyeColor.getName()), properties -> new PaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 64));
-            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_" + dyeColor.getName()), properties -> new LargePaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 128));
-            ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_" + dyeColor.getName()), properties -> new PaintGun(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun")), new Item.Properties().stacksTo(1));
+            ResourceLocation paintbrushLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_" + dyeColor.getName());
+            PAINTBRUSH_ITEMS.put(paintbrushLocation, ModItems.registerItem(paintbrushLocation, properties -> new PaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 64)));
+
+            ResourceLocation largePaintbrushLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_" + dyeColor.getName());
+            LARGE_PAINTBRUSH_ITEMS.put(largePaintbrushLocation, ModItems.registerItem(largePaintbrushLocation, properties -> new LargePaintBrushItem(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush_paint")), new Item.Properties().component(DataComponents.MAX_DAMAGE, 128)));
+
+            ResourceLocation paintgunLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_" + dyeColor.getName());
+            PAINTGUN_ITEMS.put(paintgunLocation, ModItems.registerItem(paintgunLocation, properties -> new PaintGun(dyeColor, properties, ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun")), new Item.Properties().stacksTo(1)));
         }
-        PAINTBRUSH = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush"), properties -> new EmptyBrush(properties, "Paintbrush"), new Item.Properties().stacksTo(1));
-        LARGE_PAINTBRUSH = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush"), properties -> new EmptyBrush(properties, "Large Paintbrush"), new Item.Properties().stacksTo(1));
-        EMPTY_PAINT_GUN = ModItems.registerItem(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_empty"), EmptyPaintGun::new, new Item.Properties().stacksTo(1));
+        ResourceLocation paintbrushLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintbrush");
+        PAINTBRUSH = ModItems.registerItem(paintbrushLocation, properties -> new EmptyBrush(properties, "Paintbrush"), new Item.Properties().stacksTo(1));
+        PAINTBRUSH_ITEMS.put(paintbrushLocation, PAINTBRUSH);
+
+        ResourceLocation largePaintbrushLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "large_paintbrush");
+        LARGE_PAINTBRUSH = ModItems.registerItem(largePaintbrushLocation, properties -> new EmptyBrush(properties, "Large Paintbrush"), new Item.Properties().stacksTo(1));
+        LARGE_PAINTBRUSH_ITEMS.put(largePaintbrushLocation, LARGE_PAINTBRUSH);
+
+        ResourceLocation paintgunLocation = ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "paintgun_empty");
+        EMPTY_PAINT_GUN = ModItems.registerItem(paintgunLocation, EmptyPaintGun::new, new Item.Properties().stacksTo(1));
+        PAINTGUN_ITEMS.put(paintgunLocation, EMPTY_PAINT_GUN);
 
         PolymerItemGroupUtils.registerPolymerItemGroup(ResourceLocation.fromNamespaceAndPath(PaintBrushMod.MODID, "items"), ITEM_GROUP);
     }
