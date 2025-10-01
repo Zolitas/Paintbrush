@@ -1,6 +1,7 @@
 package de.tomalbrc.paintbrush.impl;
 
 import de.tomalbrc.paintbrush.PaintBrushMod;
+import de.tomalbrc.paintbrush.datagen.MineableTool;
 import de.tomalbrc.paintbrush.impl.block.FallingTexturedBlock;
 import de.tomalbrc.paintbrush.impl.block.StatefulBlock;
 import de.tomalbrc.paintbrush.impl.block.TexturedBlock;
@@ -24,20 +25,25 @@ import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.system.linux.Stat;
 
 import java.util.*;
 
+/**
+ * Collection of painted blocks for a single original block.
+ * Can be initialized by {@link #standard(Block, MineableTool) }, {@link #shared(Block, PaintBlockCollection)} or {@link #vanilla(Block, Map)}.
+ */
 public class PaintBlockCollection {
     private final Block originalBlock;
     private final Map<DyeColor, Block> paintedBlocks = new HashMap<>();
     private final boolean canBeScraped;
     private final boolean shouldGenerateModels;
+    private final MineableTool tool;
 
-    private PaintBlockCollection(Block originalBlock, boolean canBeScraped, boolean shouldGenerateModels) {
+    private PaintBlockCollection(Block originalBlock, boolean canBeScraped, boolean shouldGenerateModels, MineableTool tool) {
         this.originalBlock = originalBlock;
         this.canBeScraped = canBeScraped;
         this.shouldGenerateModels = shouldGenerateModels;
+        this.tool = tool;
     }
 
     public Block getOriginalBlock() {
@@ -46,6 +52,10 @@ public class PaintBlockCollection {
 
     public Block getPaintedBlock(DyeColor dyeColor) {
         return paintedBlocks.get(dyeColor);
+    }
+
+    public Collection<Block> getAllPaintedBlocks() {
+        return paintedBlocks.values();
     }
 
     public void setPaintedBlock(DyeColor dyeColor, Block block) {
@@ -60,6 +70,10 @@ public class PaintBlockCollection {
         return paintedBlocks.containsValue(block);
     }
 
+    public MineableTool getTool() {
+        return tool;
+    }
+
     public boolean canBeScraped() {
         return canBeScraped;
     }
@@ -68,16 +82,28 @@ public class PaintBlockCollection {
         return shouldGenerateModels;
     }
 
+    /**
+     * This collection does not generate new blocks or models but replaces blocks with the given ones when a paintbrush is used.
+     * @param originalBlock The original block, needs to be part of the built-in block registry.
+     * @param paintedBlocks A map of dye colors to painted blocks.
+     * @return The painted block collection.
+     */
     public static PaintBlockCollection vanilla(Block originalBlock, Map<DyeColor, Block> paintedBlocks) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false, false);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, false, false, null);
 
         paintedBlocks.forEach(collection::setPaintedBlock);
 
         return collection;
     }
 
-    public static PaintBlockCollection standard(Block originalBlock) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, true);
+    /**
+     * The standard collection. This generates new custom blocks and models for all dyes.
+     * @param originalBlock The original block, needs to be part of the built-in block registry.
+     * @param tool The tool that should speed up mining of the painted blocks. Can be null.
+     * @return The painted block collection.
+     */
+    public static PaintBlockCollection standard(Block originalBlock, MineableTool tool) {
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, true, tool);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 
@@ -118,8 +144,15 @@ public class PaintBlockCollection {
         return collection;
     }
 
+    /**
+     * This collection does not generate new models but uses the models of the given source collection.
+     * Note: Using this collection does not use a new noteblock-blockstate and so doesn't fill up the limit
+     * @param originalBlock The original block, needs to be part of the built-in block registry.
+     * @param textureSource The source collection where it takes the models from.
+     * @return The painted block collection.
+     */
     public static PaintBlockCollection shared(Block originalBlock, PaintBlockCollection textureSource) {
-        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, false);
+        PaintBlockCollection collection = new PaintBlockCollection(originalBlock, true, false, null);
 
         ResourceLocation originalBlockLocation = BuiltInRegistries.BLOCK.getKey(originalBlock);
 

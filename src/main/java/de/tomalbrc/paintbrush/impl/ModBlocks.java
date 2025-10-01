@@ -1,6 +1,7 @@
 package de.tomalbrc.paintbrush.impl;
 
 
+import de.tomalbrc.paintbrush.datagen.MineableTool;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -163,7 +164,7 @@ public class ModBlocks {
     }
 
     private static void fillWithSharedCollections(List<PaintBlockCollection> collections) {
-        PaintBlockCollection planksCollection = PaintBlockCollection.standard(Blocks.OAK_PLANKS);
+        PaintBlockCollection planksCollection = PaintBlockCollection.standard(Blocks.OAK_PLANKS, MineableTool.AXE);
         collections.add(planksCollection);
         collections.add(PaintBlockCollection.shared(Blocks.BIRCH_PLANKS, planksCollection));
         collections.add(PaintBlockCollection.shared(Blocks.SPRUCE_PLANKS, planksCollection));
@@ -176,7 +177,7 @@ public class ModBlocks {
         collections.add(PaintBlockCollection.shared(Blocks.CHERRY_PLANKS, planksCollection));
         collections.add(PaintBlockCollection.shared(Blocks.PALE_OAK_PLANKS, planksCollection));
 
-        PaintBlockCollection logsCollection = PaintBlockCollection.standard(Blocks.OAK_LOG);
+        PaintBlockCollection logsCollection = PaintBlockCollection.standard(Blocks.OAK_LOG, MineableTool.AXE);
         collections.add(logsCollection);
         collections.add(PaintBlockCollection.shared(Blocks.BIRCH_LOG, logsCollection));
         collections.add(PaintBlockCollection.shared(Blocks.SPRUCE_LOG, logsCollection));
@@ -189,7 +190,7 @@ public class ModBlocks {
         collections.add(PaintBlockCollection.shared(Blocks.CHERRY_LOG, logsCollection));
         collections.add(PaintBlockCollection.shared(Blocks.PALE_OAK_LOG, logsCollection));
 
-        PaintBlockCollection strippedLogsCollection = PaintBlockCollection.standard(Blocks.STRIPPED_OAK_LOG);
+        PaintBlockCollection strippedLogsCollection = PaintBlockCollection.standard(Blocks.STRIPPED_OAK_LOG, MineableTool.AXE);
         collections.add(strippedLogsCollection);
         collections.add(PaintBlockCollection.shared(Blocks.STRIPPED_BIRCH_LOG, strippedLogsCollection));
         collections.add(PaintBlockCollection.shared(Blocks.STRIPPED_SPRUCE_LOG, strippedLogsCollection));
@@ -202,55 +203,55 @@ public class ModBlocks {
         collections.add(PaintBlockCollection.shared(Blocks.STRIPPED_CHERRY_LOG, strippedLogsCollection));
         collections.add(PaintBlockCollection.shared(Blocks.STRIPPED_PALE_OAK_LOG, strippedLogsCollection));
 
-        PaintBlockCollection cobblestoneCollection = PaintBlockCollection.standard(Blocks.COBBLESTONE);
+        PaintBlockCollection cobblestoneCollection = PaintBlockCollection.standard(Blocks.COBBLESTONE, MineableTool.PICKAXE);
         collections.add(cobblestoneCollection);
         collections.add(PaintBlockCollection.shared(Blocks.MOSSY_COBBLESTONE, cobblestoneCollection));
 
-        PaintBlockCollection stoneBricksCollection = PaintBlockCollection.standard(Blocks.STONE_BRICKS);
+        PaintBlockCollection stoneBricksCollection = PaintBlockCollection.standard(Blocks.STONE_BRICKS, MineableTool.PICKAXE);
         collections.add(stoneBricksCollection);
         collections.add(PaintBlockCollection.shared(Blocks.MOSSY_STONE_BRICKS, stoneBricksCollection));
         collections.add(PaintBlockCollection.shared(Blocks.CRACKED_STONE_BRICKS, stoneBricksCollection));
 
-        PaintBlockCollection polishedBlackstoneBricksCollection = PaintBlockCollection.standard(Blocks.POLISHED_BLACKSTONE_BRICKS);
+        PaintBlockCollection polishedBlackstoneBricksCollection = PaintBlockCollection.standard(Blocks.POLISHED_BLACKSTONE_BRICKS, MineableTool.PICKAXE);
         collections.add(polishedBlackstoneBricksCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CRACKED_POLISHED_BLACKSTONE_BRICKS, polishedBlackstoneBricksCollection));
 
-        PaintBlockCollection netherBricksCollection = PaintBlockCollection.standard(Blocks.NETHER_BRICKS);
+        PaintBlockCollection netherBricksCollection = PaintBlockCollection.standard(Blocks.NETHER_BRICKS, MineableTool.PICKAXE);
         collections.add(netherBricksCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CRACKED_NETHER_BRICKS, netherBricksCollection));
         collections.add(PaintBlockCollection.shared(Blocks.RED_NETHER_BRICKS, netherBricksCollection));
 
-        PaintBlockCollection deepslateTilesCollection = PaintBlockCollection.standard(Blocks.DEEPSLATE_TILES);
+        PaintBlockCollection deepslateTilesCollection = PaintBlockCollection.standard(Blocks.DEEPSLATE_TILES, MineableTool.PICKAXE);
         collections.add(deepslateTilesCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CRACKED_DEEPSLATE_TILES, deepslateTilesCollection));
 
-        PaintBlockCollection deepslateBricksCollection = PaintBlockCollection.standard(Blocks.DEEPSLATE_BRICKS);
+        PaintBlockCollection deepslateBricksCollection = PaintBlockCollection.standard(Blocks.DEEPSLATE_BRICKS, MineableTool.PICKAXE);
         collections.add(deepslateBricksCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CRACKED_DEEPSLATE_BRICKS, deepslateBricksCollection));
 
-        PaintBlockCollection sandCollection = PaintBlockCollection.standard(Blocks.SAND);
+        PaintBlockCollection sandCollection = PaintBlockCollection.standard(Blocks.SAND, MineableTool.SHOVEL);
         collections.add(sandCollection);
         collections.add(PaintBlockCollection.shared(Blocks.RED_SAND, sandCollection));
 
-        PaintBlockCollection sandstoneCollection = PaintBlockCollection.standard(Blocks.SANDSTONE);
+        PaintBlockCollection sandstoneCollection = PaintBlockCollection.standard(Blocks.SANDSTONE, MineableTool.PICKAXE);
         collections.add(sandstoneCollection);
         collections.add(PaintBlockCollection.shared(Blocks.RED_SANDSTONE, sandstoneCollection));
 
-        PaintBlockCollection smoothSandstoneCollection = PaintBlockCollection.standard(Blocks.SMOOTH_SANDSTONE);
+        PaintBlockCollection smoothSandstoneCollection = PaintBlockCollection.standard(Blocks.SMOOTH_SANDSTONE, MineableTool.PICKAXE);
         collections.add(smoothSandstoneCollection);
         collections.add(PaintBlockCollection.shared(Blocks.SMOOTH_RED_SANDSTONE, smoothSandstoneCollection));
 
-        PaintBlockCollection cutSandstoneCollection = PaintBlockCollection.standard(Blocks.CUT_SANDSTONE);
+        PaintBlockCollection cutSandstoneCollection = PaintBlockCollection.standard(Blocks.CUT_SANDSTONE, MineableTool.PICKAXE);
         collections.add(cutSandstoneCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CUT_RED_SANDSTONE, cutSandstoneCollection));
 
-        PaintBlockCollection nyliumCollection = PaintBlockCollection.standard(Blocks.WARPED_NYLIUM);
+        PaintBlockCollection nyliumCollection = PaintBlockCollection.standard(Blocks.WARPED_NYLIUM, MineableTool.PICKAXE);
         collections.add(nyliumCollection);
         collections.add(PaintBlockCollection.shared(Blocks.CRIMSON_NYLIUM, nyliumCollection));
     }
 
     private static void fillWithStandardCollections(List<PaintBlockCollection> collections) {
-        Block[] standardBlocks = {
+        Block[] standardBlocksMineableWithPickaxe = {
                 Blocks.DEEPSLATE,
                 Blocks.COBBLED_DEEPSLATE,
                 Blocks.POLISHED_DEEPSLATE,
@@ -298,11 +299,15 @@ public class ModBlocks {
                 Blocks.PURPUR_BLOCK,
                 Blocks.PURPUR_PILLAR,
 
-                Blocks.DIRT,
-                Blocks.GRAVEL,
                 Blocks.PACKED_MUD,
         };
 
-        Arrays.stream(standardBlocks).map(PaintBlockCollection::standard).forEach(collections::add);
+        Block[] standardBlocksMineableWithShovel = {
+                Blocks.DIRT,
+                Blocks.GRAVEL,
+        };
+
+        Arrays.stream(standardBlocksMineableWithPickaxe).map(block -> PaintBlockCollection.standard(block, MineableTool.PICKAXE)).forEach(collections::add);
+        Arrays.stream(standardBlocksMineableWithShovel).map(block -> PaintBlockCollection.standard(block, MineableTool.SHOVEL)).forEach(collections::add);
     }
 }

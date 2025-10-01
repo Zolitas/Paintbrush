@@ -12,6 +12,9 @@
   "entrypoints": {
     "main": [
       "de.tomalbrc.paintbrush.PaintBrushMod"
+    ],
+    "fabric-datagen": [
+      "de.tomalbrc.paintbrush.datagen.PaintBlockTagDataGenerator"
     ]
   },
   "mixins": [
