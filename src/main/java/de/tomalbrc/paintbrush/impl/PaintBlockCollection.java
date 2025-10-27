@@ -20,6 +20,7 @@ import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -201,8 +202,8 @@ public class PaintBlockCollection {
     private static @NotNull Block createPaintedBlock(Block originalBlock, BlockBehaviour.Properties paintedBlockProperties, Map<BlockState, BlockState> stateMap, ResourceLocation paintedBlockLocation) {
         Block paintedBlock;
 
-        if (originalBlock instanceof SandBlock originalSandBlock) {
-            paintedBlock = new FallingTexturedBlock(new ColorRGBA(originalSandBlock.getDustColor(null, null, null)), paintedBlockProperties, stateMap);
+        if (originalBlock instanceof FallingBlock originalFallingBlock) {
+            paintedBlock = new FallingTexturedBlock(new ColorRGBA(originalFallingBlock.getDustColor(null, null, null)), paintedBlockProperties, stateMap);
         }
         else if (originalBlock instanceof RotatedPillarBlock) {
             paintedBlock = new TexturedPillarBlock(paintedBlockProperties, stateMap);
